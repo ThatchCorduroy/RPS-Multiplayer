@@ -33,7 +33,8 @@ $(document).ready(function() {
                 $("#secondRow").html(welcome);
 
                 //initialize the player box
-                $(box + ".waiting").text(name)
+                console.log(box + " .waiting")
+                $(box + " .waiting").text(name);
                 $(box + " .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
     
                 //add the player to firebase
