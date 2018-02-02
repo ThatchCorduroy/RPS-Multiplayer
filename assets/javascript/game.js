@@ -97,7 +97,7 @@ $(document).ready(function() {
     });
 
     database.ref("turn").on("value", function(snapshot) {
- 
+        console.log("The change took");
         if (snapshot.exists()) {
 
             console.log("Got into turn");
