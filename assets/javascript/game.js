@@ -30,13 +30,8 @@ $(document).ready(function() {
                 }
                 //add the welcome text
                 welcome.text("Hi " + name + "! You are player " + player + "!");
-                $("#secondRow").html(welcome);
+                //$("#secondRow").html(welcome);
 
-                //initialize the player box
-                console.log(box + " .waiting")
-                $(box + " .waiting").text(name);
-                $(box + " .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
-    
                 //add the player to firebase
                 database.ref("players/" + player).set( {
                     losses: 0,
@@ -45,6 +40,76 @@ $(document).ready(function() {
                 });
             });
     };
+
+    function takeTurn(turn) {
+        var rps = ["Rock", "Paper", "Scissors"];
+        var rpsdiv = $(box + " #rps");
+
+        for (i=0; i<rps.length; i++) {
+            var newp = $("<p>");
+            
+            newp.text(rps[i]);
+            newp.addClass("rpsbutton")
+            newp.attr("data-value", i)
+            rpsdiv.append(newp);    
+        }
+
+        database.ref().update( {
+            turn: turn++
+        })
+    };
+
+    database.ref("players").on("value", function(snapshot) {
+
+        console.log("got into players");
+        //initialize the player boxes as a new player comes online
+        var name;
+        var wins;
+        var losses;
+
+        snapshot.forEach(function(childSnapshot) {
+            
+            var childData = childSnapshot.val();
+            var player = childSnapshot.key;
+            var name = childData.name;
+            var wins = childData.wins;
+            var losses = childData.losses;
+            var childbox;
+
+            if (player === '1') {
+                childbox = "#leftbox";
+            } else if (player === '2') {
+                childbox = "#rightbox";
+            }
+
+            $(childbox + " .waiting").text(name);
+            $(childbox + " .winloss").html("<span>Wins: " + wins + "</span><span>&nbsp;</span><span>Losses: " + losses + "</span>");
+
+            });
+
+        if (snapshot.numChildren() === 2) {
+            database.ref().update( {
+                turn: 1
+            })
+        };  
+    });
+
+    database.ref("turn").on("value", function(snapshot) {
+        if (snapshot.exists()) {
+            var turn;
+            var data = snapshot.val();
+
+            turn = data.turn
+
+            if (turn === player) {
+                //think about killing off left/right and just making the id of the box have the number
+                //if I did that I could flash the border here based on turn #
+
+                takeTurn(turn);
+
+            }
+        }
+    });
 
     // function addPlayer(name) {
     //     //set player
@@ -71,19 +136,7 @@ $(document).ready(function() {
     //     }
     // };
 
-    function turnBox(handside) {
-        var rps = ["Rock", "Paper", "Scissors"];
-        var rpsdiv = $(handside + "#rps");
 
-        for (i=0; i<rps.length; i++) {
-            var newp = $("<p>");
-            
-            newp.text(rps[i]);
-            newp.addClass("rpsbutton")
-            newp.attr("data-value", i)
-            rpsdiv.append(newp);    
-        }
-    };
 
     function selectBox(handside, selection) {
         var rpsdiv = $(handside + "#rps");
@@ -110,7 +163,7 @@ $(document).ready(function() {
     $("#submit").on("click", function(event) {
         event.preventDefault();
 
-        playername = $("#form-input").val().trim();
+        var playername = $("#form-input").val().trim();
         addPlayer(playername);
 
     })
