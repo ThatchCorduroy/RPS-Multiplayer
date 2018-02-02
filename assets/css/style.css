@@ -1,0 +1,27 @@
+.innerbox {
+    height: 200px;
+    width: 200px;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.waiting {
+    font-size: 20px;
+    padding-bottom: 15px;
+}
+
+.rps {
+    height: 105px;
+    font-size: 18px;
+}
+
+.winloss {
+    padding-top: 20px;
+}
+
+.selected {
+    font-size: 30px;
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RPS-Multiplayer</title>
+    <link rel="stylesheet" href="assets/css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>    
+    <script src="assets/javascript/game.js"></script>
+</head>
+    
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <header>Rock Paper Scissors</header>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+
+            </div>
+            <div id="secondRow" class="col-md-4">
+                <form id="inputForm">
+                    <input type="text" id="form-input">
+                    <input id="submit" type="submit" value="Start">
+                </form>
+            </div>
+            <div class="col-md-4">
+                    
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div id=leftbox class=innerbox>
+                    <div class="row waiting">
+                    <p>Waiting for Player 1</p>
+                    </div>
+                    <div class="row rps">
+
+                    </div>
+                    <div class="row winloss">
+                          
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div id=midbox class=innerbox>
+                        
+                </div>    
+            </div>
+            <div class="col-md-4">
+                <div id=rightbox class=innerbox>
+                    <div class="row waiting">
+                    <p>Waiting for Player 2</p>
+                    </div>
+                    <div class="row rps">
+                        <p>Rock</p>
+                        <p>Paper</p>
+                        <p>Scissors</p>
+                    </div>
+                    <div class="row winloss">
+                    <span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>        
+                    </div>
+                </div>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+
+            </div>
+            <div class="col-md-4">
+                    
+            </div>
+            <div class="col-md-4">
+                    
+            </div>
+        </div>
+        
+</body>
+</html>
