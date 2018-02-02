@@ -42,6 +42,8 @@ $(document).ready(function() {
     };
 
     function takeTurn(turn) {
+        console.log(player, "is taking their turn");
+
         var rps = ["Rock", "Paper", "Scissors"];
         var rpsdiv = $(box + " #rps");
 
