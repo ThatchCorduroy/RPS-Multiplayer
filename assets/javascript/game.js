@@ -14,45 +14,61 @@ $(document).ready(function() {
     var player = 0;
     var box = "";
 
-    var welcome = $("<p>");
+    function addPlayer(name) {
+        var welcome = $("<p>");
 
-    function whatPlayerAmI() {
         var ref = firebase.database().ref("players");
         ref.once("value")
-          .then(function(snapshot) {
-            return snapshot.hasChild("1");
-          });
-    }
+            .then(function(snapshot) {
+                console.log(snapshot.hasChild("1"));
+                if (snapshot.hasChild("1") === true) {
+                    player = 2;
+                    box = "#rightbox";
+                } else {
+                    player = 1;
+                    box = "#leftbox";
+                }
+                //add the welcome text
+                welcome.text("Hi " + name + "! You are player " + player + "!");
+                $("#secondRow").html(welcome);
 
-    function addPlayer(name) {
-        //if the database has a player this player is 2
-        if (whatPlayerAmI()) {
-            player = 2;
-            
-        //if the database doesn't have a player this player is 1
-        } else {
-            player = 1;
-        }
-        //add the player to the database
-        database.ref("players/" + player).set( {
-            losses: 0,
-            name: name,
-            wins: 0
-        });
-
-        welcome.text("Hi " + name + "! You are player " + player + "!");
-        $("#secondRow").html(welcome);
-
-        if (player === 1) {
-            box = "#leftbox"
-            $("#leftbox .waiting").text(name)
-            $("#leftbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
-
-        } else if (player === 2) {
-            $("#rightbox .waiting").text(name)
-            $("#rightbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
-        }
+                //initialize the player box
+                $(box + ".waiting").text(name)
+                $(box + " .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
+    
+                //add the player to firebase
+                database.ref("players/" + player).set( {
+                    losses: 0,
+                    name: name,
+                    wins: 0
+                });
+            });
     };
+
+    // function addPlayer(name) {
+    //     //set player
+    //     whatPlayerAmI();
+    //     console.log("player", player);
+    //     //add the player to the database
+    //     database.ref("players/" + player).set( {
+    //         losses: 0,
+    //         name: name,
+    //         wins: 0
+    //     });
+
+    //     welcome.text("Hi " + name + "! You are player " + player + "!");
+    //     $("#secondRow").html(welcome);
+
+    //     if (player === 1) {
+    //         box = "#leftbox"
+    //         $("#leftbox .waiting").text(name)
+    //         $("#leftbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
+
+    //     } else if (player === 2) {
+    //         $("#rightbox .waiting").text(name)
+    //         $("#rightbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
+    //     }
+    // };
 
     function turnBox(handside) {
         var rps = ["Rock", "Paper", "Scissors"];
