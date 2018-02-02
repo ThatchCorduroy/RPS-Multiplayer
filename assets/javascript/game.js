@@ -98,6 +98,8 @@ $(document).ready(function() {
 
     database.ref("turn").on("value", function(snapshot) {
         if (snapshot.exists()) {
+
+            console.log("Got into turn");
             var turn;
             var data = snapshot.val();
 
@@ -106,7 +108,7 @@ $(document).ready(function() {
             if (turn === player) {
                 //think about killing off left/right and just making the id of the box have the number
                 //if I did that I could flash the border here based on turn #
-
+                console.log(player, "was equal");
                 takeTurn(turn);
 
             }
