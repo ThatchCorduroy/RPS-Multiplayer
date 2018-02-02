@@ -97,9 +97,11 @@ $(document).ready(function() {
     });
 
     database.ref("turn").on("value", function(snapshot) {
+ 
         if (snapshot.exists()) {
 
             console.log("Got into turn");
+            console.log("player", player);
             var turn;
             var data = snapshot.val();
 
