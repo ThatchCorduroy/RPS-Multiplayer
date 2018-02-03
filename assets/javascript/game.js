@@ -139,17 +139,20 @@ $(document).ready(function() {
 
         //weird thing happened when the commmented out section was separate
         //race condition????
-        database.ref("players/" + turnplayer).update({choice: rpspick}, function() {
-            database.ref("turn").transaction(function(turn) {
-                console.log("Incrementing turn in the rps click", turn);
-                return turn + 1
-            });
-        });
+        // database.ref("players/" + turnplayer).update({choice: rpspick}, function() {
+        //     database.ref("turn").transaction(function(turn) {
+        //         console.log("Incrementing turn in the rps click", turn);
+        //         return turn + 1
+        //     });
+        // });
 
         // database.ref("players/" + turnplayer).update( {
         //     choice: rpspick
         // })
-    })
+        database.ref("players/" + turnplayer).update({choice: rpspick});
+            
+        database.ref("turn").transaction(function(turn) {return turn + 1});
+    });
 
     $("#submit").on("click", function(event) {
         console.log("In submit");
@@ -158,7 +161,7 @@ $(document).ready(function() {
         var playername = $("#form-input").val().trim();
         addPlayer(playername);
 
-    })
+    });
 
     console.log("ver1");
 
