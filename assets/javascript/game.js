@@ -160,4 +160,6 @@ $(document).ready(function() {
 
     })
 
+    console.log("ver1");
+
 });
