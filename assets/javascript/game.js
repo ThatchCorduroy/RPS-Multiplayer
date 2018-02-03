@@ -13,24 +13,25 @@ $(document).ready(function() {
     var database = firebase.database();
     var player = 0;
     var box = "";
+    var track = 0;
 
     function addPlayer(name) {
+        console.log("In addPlayer");
         var welcome = $("<p>");
 
         var ref = firebase.database().ref("players");
         ref.once("value")
             .then(function(snapshot) {
-                console.log(snapshot.hasChild("1"));
                 if (snapshot.hasChild("1") === true) {
                     player = 2;
-                    box = "#rightbox";
+                    box = "#player2";
                 } else {
                     player = 1;
-                    box = "#leftbox";
+                    box = "#player1";
                 }
                 //add the welcome text
                 welcome.text("Hi " + name + "! You are player " + player + "!");
-                //$("#secondRow").html(welcome);
+                $("#secondRow").html(welcome);
 
                 //add the player to firebase
                 database.ref("players/" + player).set( {
@@ -41,29 +42,25 @@ $(document).ready(function() {
             });
     };
 
-    function takeTurn(turn) {
-        console.log(player, "is taking their turn");
+    function takeTurn(turnCount) {
+        console.log("In takeTurn");
 
         var rps = ["Rock", "Paper", "Scissors"];
-        var rpsdiv = $(box + " #rps");
+        var rpsdiv = $("#player" + player + " .rps");
 
         for (i=0; i<rps.length; i++) {
             var newp = $("<p>");
             
             newp.text(rps[i]);
-            newp.addClass("rpsbutton")
-            newp.attr("data-value", i)
+            newp.addClass("rpsbutton");
+            newp.attr("data-value", rps[i]);
             rpsdiv.append(newp);    
         }
-
-        database.ref().update( {
-            turn: turn++
-        })
+        console.log("I finished setting up player", player);
     };
 
     database.ref("players").on("value", function(snapshot) {
-
-        console.log("got into players");
+        console.log("In db players change");
         //initialize the player boxes as a new player comes online
         var name;
         var wins;
@@ -79,9 +76,9 @@ $(document).ready(function() {
             var childbox;
 
             if (player === '1') {
-                childbox = "#leftbox";
+                childbox = "#player1";
             } else if (player === '2') {
-                childbox = "#rightbox";
+                childbox = "#player2";
             }
 
             $(childbox + " .waiting").text(name);
@@ -90,6 +87,10 @@ $(document).ready(function() {
             });
 
         if (snapshot.numChildren() === 2) {
+            //remove the event handler
+            database.ref("players").off("value");
+            //add the turn
+            console.log("Setting turn to 1 in the players db change");
             database.ref().update( {
                 turn: 1
             })
@@ -97,78 +98,61 @@ $(document).ready(function() {
     });
 
     database.ref("turn").on("value", function(snapshot) {
-        console.log("The change took");
+        console.log("In the db turn on");
         if (snapshot.exists()) {
 
             console.log("Got into turn");
             
-            var turn;
-            var data = snapshot.val();
-
-            turn = data.turn
+            var turn = snapshot.val();
+      
             console.log("player", player);
             console.log("turn", turn);
-            
+
             if (turn === player) {
                 //think about killing off left/right and just making the id of the box have the number
                 //if I did that I could flash the border here based on turn #
                 console.log(player, "was equal");
                 takeTurn(turn);
-
+            } else {
+                console.log(player,"wasn't equal");
             }
         }
     });
 
-    // function addPlayer(name) {
-    //     //set player
-    //     whatPlayerAmI();
-    //     console.log("player", player);
-    //     //add the player to the database
-    //     database.ref("players/" + player).set( {
-    //         losses: 0,
-    //         name: name,
-    //         wins: 0
-    //     });
+    $(document).on("click", ".rpsbutton", function(event) {
+        console.log("I'm in the rps click");
+        //set the html up
+        var rpspick = $(this).attr("data-value");
+        var turnplayer = $(this).parents(".innerbox").attr("id").slice(-1);
+        var rpsarea = $("#player" + turnplayer + " .rps");
+        var choice = $("<p>");
 
-    //     welcome.text("Hi " + name + "! You are player " + player + "!");
-    //     $("#secondRow").html(welcome);
+        console.log("rpsarea", rpsarea);
+        
+        rpsarea.empty();
 
-    //     if (player === 1) {
-    //         box = "#leftbox"
-    //         $("#leftbox .waiting").text(name)
-    //         $("#leftbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
+        choice.text(rpspick);
+        choice.attr("data-value", rpspick);
+        choice.addClass("selected");
 
-    //     } else if (player === 2) {
-    //         $("#rightbox .waiting").text(name)
-    //         $("#rightbox .winloss").html("<span>Wins: 0</span><span>&nbsp;</span><span>Losses: 0</span>");
-    //     }
-    // };
+        rpsarea.append(choice);
 
+        //weird thing happened when the commmented out section was separate
+        //race condition????
+        database.ref("players/" + turnplayer).update({choice: rpspick}, function() {
+            database.ref("turn").transaction(function(turn) {
+                console.log("Incrementing turn in the rps click", turn);
+                return turn + 1
+            });
+        });
 
-
-    function selectBox(handside, selection) {
-        var rpsdiv = $(handside + "#rps");
-        var newp = $("<p>");
-
-        rpsdiv.empty();
-        newp.text(selection);
-        rpsdiv.append(newp);
-
-    }
-
-    // database.ref().on("child_added", function() {
-    //     players += 1
-    //     console.log(players);
-    // });
-
-    database.ref().on("value", function(snapshot) {
-        var data = snapshot.val();
-
-
-
-    });
+        // database.ref("players/" + turnplayer).update( {
+        //     choice: rpspick
+        // })
+    })
 
     $("#submit").on("click", function(event) {
+        console.log("In submit");
         event.preventDefault();
 
         var playername = $("#form-input").val().trim();
