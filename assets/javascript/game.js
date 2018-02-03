@@ -12,8 +12,11 @@ $(document).ready(function() {
 
     var database = firebase.database();
     var player = 0;
+    var opponent = 0;
     var box = "";
     var track = 0;
+    var wins = 0;
+    var losses = 0;
 
     function addPlayer(name) {
         console.log("In addPlayer");
@@ -24,9 +27,11 @@ $(document).ready(function() {
             .then(function(snapshot) {
                 if (snapshot.hasChild("1") === true) {
                     player = 2;
+                    opponent = 1;
                     box = "#player2";
                 } else {
                     player = 1;
+                    opponent = 2;
                     box = "#player1";
                 }
                 //add the welcome text
@@ -57,6 +62,80 @@ $(document).ready(function() {
             rpsdiv.append(newp);    
         }
         console.log("I finished setting up player", player);
+    };
+
+    function winnerCheck() {
+        console.log("In Winner Check");
+        var ref = firebase.database().ref();
+        choice1 = "";
+        choice2 = "";
+
+        ref.once("value")
+           .then(function(snapshot) {
+            
+            var data = snapshot.val();
+            var pchoice = data.players[player].choice;
+            var ochoice = data.players[opponent].choice;
+            var pname = data.players[player].name;
+            var oname = data.players[opponent].name;
+            
+            var rockkey = ["Paper", "Rock", "Scissors"];
+            var paperkey = ["Scissors", "Paper", "Rock"];
+            var scissorskey = ["Rock", "Scissors", "Paper"];
+            var key = [];
+            var windiv = $("#midbox");
+           
+            
+            switch(pchoice) {
+                case "Rock":
+                    key = rockkey;
+                    break;
+                case "Paper":
+                    key = paperkey;
+                    break;
+                case "Scissors":
+                    key = scissorskey;
+            }
+
+            for (var i = 0; i<key.length; i++) {
+                if (ochoice === key[i]) {
+                    switch(i) {
+                        case 0:
+                            losses++;
+                            windiv.html("<p>" + oname + "</p><p>Wins!</p>");
+                            database.ref("players/" + player).update({losses: losses});
+                            break;
+                        case 1:
+                            windiv.html("<p>Tie</p><p>Game</p>");
+                            break;
+                        case 2:
+                            wins++;
+                            windiv.html("<p>" + pname + "</p><p>Wins!</p>");
+                            database.ref("players/" + player).update({wins: wins});
+                            break;
+
+                    };
+                };
+            
+            };
+        setTimeout(reset, 5000);
+        });
+    };
+
+    function reset() {
+        console.log("In reset");
+        $(".rps").empty();
+        $("#midbox").empty();
+        $()
+
+        if (player === 1) {
+            database.ref().update( {
+                turn: 1
+            });
+        };
+
+        $("#player" + player + " .winloss").html("<span>Wins: " + wins + "</span><span>&nbsp;</span><span>Losses: " + losses + "</span>");
+
     };
 
     database.ref("players").on("value", function(snapshot) {
@@ -113,10 +192,11 @@ $(document).ready(function() {
                 //if I did that I could flash the border here based on turn #
                 console.log(player, "was equal");
                 takeTurn(turn);
-            } else {
-                console.log(player,"wasn't equal");
-            }
-        }
+            } else if (turn === 3) {
+                console.log("Run WInner CHeck")
+                winnerCheck();
+            };//
+        };
     });
 
     $(document).on("click", ".rpsbutton", function(event) {
@@ -150,7 +230,6 @@ $(document).ready(function() {
         //     choice: rpspick
         // })
         database.ref("players/" + turnplayer).update({choice: rpspick});
-            
         database.ref("turn").transaction(function(turn) {return turn + 1});
     });
 
