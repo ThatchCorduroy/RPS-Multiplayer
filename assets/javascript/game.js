@@ -101,12 +101,14 @@ $(document).ready(function() {
         if (snapshot.exists()) {
 
             console.log("Got into turn");
-            console.log("player", player);
+            
             var turn;
             var data = snapshot.val();
 
             turn = data.turn
-
+            console.log("player", player);
+            console.log("turn", turn);
+            
             if (turn === player) {
                 //think about killing off left/right and just making the id of the box have the number
                 //if I did that I could flash the border here based on turn #
