@@ -13,7 +13,6 @@ $(document).ready(function() {
     var database = firebase.database();
     var player = 0;
     var opponent = 0;
-    var box = "";
     var track = 0;
     var wins = 0;
     var losses = 0;
@@ -25,15 +24,23 @@ $(document).ready(function() {
         var ref = firebase.database().ref("players");
         ref.once("value")
             .then(function(snapshot) {
-                if (snapshot.hasChild("1") === true) {
-                    player = 2;
-                    opponent = 1;
-                    box = "#player2";
-                } else {
+
+                //no players have joined yet
+                if (snapshot.hasChild("1") === false && snapshot.hasChild("2") === false) {
                     player = 1;
                     opponent = 2;
-                    box = "#player1";
-                }
+
+                //player 1 is present
+                } else if (snapshot.hasChild("1") === true) {
+                    player = 2;
+                    opponent = 1;
+                
+                //player 2 is present
+                } else if (snapshot.hasChild("2") === true) {
+                    player = 1;
+                    opponent = 2;
+                };
+
                 //add the welcome text
                 welcome.text("Hi " + name + "! You are player " + player + "!");
                 $("#secondRow").html(welcome);
@@ -45,6 +52,7 @@ $(document).ready(function() {
                     wins: 0
                 });
             });
+        
     };
 
     function takeTurn(turnCount) {
@@ -174,6 +182,8 @@ $(document).ready(function() {
                 turn: 1
             })
         };  
+
+        database.ref("players/" + player).onDisconnect().remove();
     });
 
     database.ref("turn").on("value", function(snapshot) {
@@ -199,6 +209,9 @@ $(document).ready(function() {
         };
     });
 
+    database.ref("players/" + player).onDisconnect().remove();
+
+
     $(document).on("click", ".rpsbutton", function(event) {
         console.log("I'm in the rps click");
         //set the html up
@@ -217,18 +230,6 @@ $(document).ready(function() {
 
         rpsarea.append(choice);
 
-        //weird thing happened when the commmented out section was separate
-        //race condition????
-        // database.ref("players/" + turnplayer).update({choice: rpspick}, function() {
-        //     database.ref("turn").transaction(function(turn) {
-        //         console.log("Incrementing turn in the rps click", turn);
-        //         return turn + 1
-        //     });
-        // });
-
-        // database.ref("players/" + turnplayer).update( {
-        //     choice: rpspick
-        // })
         database.ref("players/" + turnplayer).update({choice: rpspick});
         database.ref("turn").transaction(function(turn) {return turn + 1});
     });
@@ -239,6 +240,19 @@ $(document).ready(function() {
 
         var playername = $("#form-input").val().trim();
         addPlayer(playername);
+
+    });
+
+    $("#send").on("click", function(event) {
+        console.log("In send");
+        event.preventDefault();
+        var chat = $("<p>");
+
+        message = $("#chat-input").val().trim();
+        chat.text(message);
+        $("#chatbox").append(chat);
+
+        database.ref("chat").push({message});
 
     });
 

@@ -10,16 +10,26 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.7.1/firebase.js"></script>    
-    <script src="assets/javascript/game.js"></script>
+    <script src="assets/javascript/game2.js"></script>
 </head>
     
 <body>
-    <div class="container">
+    <!-- NAVBAR -->
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-3">Rock, Paper, Scissors!!!</h1>
+            <p class="lead">Enter You Name to Begin</p>
+        </div>
+    </div>
+
+
+    <div id="main" class="container">
         <div class="row">
             <div class="col-md-12">
                 <header>Rock Paper Scissors</header>
             </div>
         </div>
+        <div></div>
         <div class="row">
             <div class="col-md-4">
 
@@ -37,8 +47,8 @@
         <div class="row">
             <div class="col-md-4">
                 <div id=player1 class=innerbox>
-                    <div class="row waiting">
-                    <p>Waiting for Player 1</p>
+                    <div class="row name">
+                    Waiting for Player 1
                     </div>
                     <div class="row rps">
 
@@ -50,13 +60,13 @@
             </div>
             <div class="col-md-4">
                 <div id=midbox class=innerbox>
-                    
+
                 </div>    
             </div>
             <div class="col-md-4">
                 <div id=player2 class=innerbox>
-                    <div class="row waiting">
-                    <p>Waiting for Player 2</p>
+                    <div class="row name">
+                    Waiting for Player 2
                     </div>
                     <div class="row rps">
                         
@@ -66,18 +76,31 @@
                     </div>
                 </div>
         </div>
-        </div>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-2">
 
             </div>
-            <div class="col-md-4">
-                    
+            <div class="col-md-10 chatbox">
+                <div id="chatbox"></div>
             </div>
-            <div class="col-md-4">
-                    
+            <div class="col-md-2">
+
             </div>
         </div>
-        
+        <div class="row">
+            <div class="col-md-2">
+                
+            </div>
+            <div class="col-md-10">
+                <form id="chatForm">
+                    <input type="text" id="chat-input">
+                    <input id="send" type="submit" value="Send">
+                </form>
+            </div>
+            <div class="col-md-2">
+
+            </div>
+        </div>
+    </div>
 </body>
 </html>
