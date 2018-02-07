@@ -209,9 +209,6 @@ $(document).ready(function() {
         };
     });
 
-    database.ref("players/" + player).onDisconnect().remove();
-
-
     $(document).on("click", ".rpsbutton", function(event) {
         console.log("I'm in the rps click");
         //set the html up

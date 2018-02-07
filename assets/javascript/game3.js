@@ -422,13 +422,16 @@ $(document).ready(function() {
                         case 0:
                             plosses += 1;
                             $windiv.html("<p>" + oname + "</p><p>Wins!</p>");
+                            console.log("I WON");
                             break;
                         case 1:
                             $windiv.html("<p>Tie</p><p>Game</p>");
+                            console.log("TIE GAME");
                             break;
                         case 2:
                             pwins += 1;
                             $windiv.html("<p>" + pname + "</p><p>Wins!</p>");
+                            console.log("I LOST");
                             break;
 
                     };
@@ -451,7 +454,6 @@ $(document).ready(function() {
             database.ref().update({turn: 1});
             database.ref("players/" + player + "/choice").remove();
        
-            console.log("THE WINNER ISSSSSS", winstatus);
         });
     };
 
