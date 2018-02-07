@@ -261,8 +261,16 @@ $(document).ready(function() {
             }
         });
 
-        database.ref("players/" + opponent).on("child_removed", function(snapshot) {
+        database.ref("players").on("child_removed", function(snapshot) {
+
+          
             $oname.text("Waiting for player" + opponent);
+            $prpsarea.empty();
+            $orpsarea.empty();
+            database.ref("players/" + player + "/choice").remove();
+            
+   
+           
         });
 
         database.ref("turn").on("value", function(snapshot) {
@@ -306,19 +314,7 @@ $(document).ready(function() {
     function checkWinner() {
 
         console.log("In Winner Check");
-        //var ref = firebase.database().ref();
-
-
-        // console.log("Setting turn to 2");
-        // (database.ref().once("value").then(function(snapshot) {
-        //     var data = snapshot.val();
-        //     var turn = data.turn;
-
-        //     if (data.turn === 1) {
-        //         database.ref().update({turn: 2});
-        //     };
-        // }))
-        //.then(
+  
             
         database.ref().once("value").then(function(snapshot) {
     
@@ -395,7 +391,11 @@ $(document).ready(function() {
 
     function reset() {
         database.ref().update({turn: 0})
-    }
+    };
+
+    function cleanup() {
+
+    };
 
     $("#submit").on("click", function(event) {
         event.preventDefault();
