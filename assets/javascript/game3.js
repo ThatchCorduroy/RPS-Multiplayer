@@ -415,7 +415,7 @@ $(document).ready(function() {
                 case "Scissors":
                     key = scissorskey;
             };
-
+            console.log("OCHOICE", ochoice);
             for (var i = 0; i<key.length; i++) {
                 if (ochoice === key[i]) {
                     switch(i) {
