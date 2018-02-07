@@ -462,6 +462,7 @@ $(document).ready(function() {
     };
 
     $("#submit").on("click", function(event) {
+        console.log("YOU CLICKED SUBMIT");
         event.preventDefault();
 
         //initPlayer();
