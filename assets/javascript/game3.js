@@ -100,7 +100,12 @@ $(document).ready(function() {
         var $prpsarea = $("#player" + player + " .rps");
         var $orpsarea = $("#player" + opponent + " .rps");
 
+        var $midarea = $("#midarea");
+
         var $secondrow = $("#secondrow");
+
+        var $chatarea = $(".chatarea");
+        var $chatbox = $("#chatbox");
 
         //listeners for player names
         database.ref("players/" + player + "/name").on("value", function(snapshot) {
@@ -110,6 +115,9 @@ $(document).ready(function() {
 
                 console.log("In the pname player", player);
                 console.log("In the pname", snapshot.val());
+
+                $chatbox.empty();
+                database.ref("chat").remove();
                 
                 //Set HTML for this players name
                 if (pname !== "Waiting for Player " + player) {
@@ -132,6 +140,8 @@ $(document).ready(function() {
                 console.log("In the oname", snapshot.val());
 
                 $oname.text(oname);
+                $chatbox.empty();
+                database.ref("chat").remove();
 
                 database.ref("players/" + player + "/name").once("value").then(function(snapshot) {
                     var pname = snapshot.val();
@@ -141,6 +151,8 @@ $(document).ready(function() {
                         console.log("OPPONENT HAS NO NAME");
                     } else {
                         console.log("IM ALL SETUP");
+
+                        $chatarea.show();
 
                         database.ref("players/" + player).update({
 
@@ -263,14 +275,27 @@ $(document).ready(function() {
 
         database.ref("players").on("child_removed", function(snapshot) {
 
+            var data = snapshot.val();
+            var oname = data.name;
+            var $newchat = $("<div>");
+
+            console.log("OPP NAME", oname)
           
             $oname.text("Waiting for player" + opponent);
             $prpsarea.empty();
             $orpsarea.empty();
+            //$chatbox.empty();
+
+            //$("#chatbox").append("<p>")
+
             database.ref("players/" + player + "/choice").remove();
             
-   
-           
+            $newchat.addClass("alert alert-danger");
+            $newchat.attr("role", "alert");
+            $newchat.css("text-align", "center");
+            $newchat.text(oname + " has disconnected.");
+            $chatbox.append($newchat);
+            $chatbox.scrollTop(($chatbox)[0].scrollHeight);
         });
 
         database.ref("turn").on("value", function(snapshot) {
@@ -278,35 +303,65 @@ $(document).ready(function() {
             var turn = snapshot.val()
             console.log("I'm in turn 0, turn = ", turn);
 
-            if (turn === 0) {
-
-                var rps = ["Rock", "Paper", "Scissors"];
-        
-                $(".rpsbutton").empty();
-                $("#midbox").empty();
-                $prpsarea.empty();
-                $orpsarea.empty();
-        
-                for (i=0; i<rps.length; i++) {
-                    var newp = $("<p>");
-                    
-                    newp.text(rps[i]);
-                    newp.addClass("rpsbutton");
-                    newp.attr("data-value", rps[i]);
-                    $prpsarea.append(newp);    
-                };
-            } else if (turn === 1) {
-
+            switch(turn) {
+                case -1:
+                    $chatarea.hide();
+                    break;
+                case 0:
+                    var rps = ["Rock", "Paper", "Scissors"];
+            
+                    $chatarea.show();
+                    $(".rpsbutton").empty();
+                    $("#midbox").empty();
+                    $midarea.css("visibility", "hidden");
+                    $prpsarea.empty();
+                    $orpsarea.empty();
+            
+                    for (i=0; i<rps.length; i++) {
+                        var newp = $("<p>");
+                        
+                        newp.text(rps[i]);
+                        newp.addClass("rpsbutton");
+                        newp.attr("data-value", rps[i]);
+                        $prpsarea.append(newp);    
+                    };
+                    break;
+                case 1:
+                    $chatarea.show();
 
                     return new Promise((resolve, reject) => {  //found this basic idea online - don't really get why I needed it or why this made setTimeout work
-                      setTimeout(reset, 5000);
+                    setTimeout(reset, 5000);
                     });
-                  
-            
-
-            }
+            };
 
         });
+
+        database.ref("chat").on("child_added", function(snapshot) {
+            
+            var chat = snapshot.val();
+            
+            var chatplayer = chat.player;
+            var chattext = chat.text;
+
+            var $newchat = $("<div>");
+            
+
+            if (chatplayer === player) {
+                $newchat.addClass("alert alert-success");
+                $newchat.attr("role", "alert");
+            } else if (chatplayer === opponent) {
+                $newchat.addClass("alert alert-info");
+                $newchat.attr("role", "alert");
+                $newchat.css("text-align", "right");
+                
+            }
+
+            $newchat.text("Player " + chatplayer + ": " + chattext);
+
+            $chatbox.append($newchat);
+            $chatbox.scrollTop(($chatbox)[0].scrollHeight);
+        
+        })
 
 
     };
@@ -367,6 +422,7 @@ $(document).ready(function() {
                             break;
 
                     };
+                    $("#midarea").css("visibility", "visible");;
                 };
             };
 
@@ -391,10 +447,6 @@ $(document).ready(function() {
 
     function reset() {
         database.ref().update({turn: 0})
-    };
-
-    function cleanup() {
-
     };
 
     $("#submit").on("click", function(event) {
@@ -425,6 +477,17 @@ $(document).ready(function() {
 
 
         database.ref("players/" + turnplayer).update({choice: rpspick}); 
+    });
+
+    $("#send").on("click", function(event) {
+        event.preventDefault();
+
+        //initPlayer();
+         database.ref("chat/").push().set({
+             player: player,
+             text: $("#chat-input").val().trim()
+         });
+         $("#chat-input").val("");
     });
 
 });

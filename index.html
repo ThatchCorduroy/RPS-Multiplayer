@@ -28,72 +28,68 @@
             <div class="col-md-4">
 
             </div>
-            <div id="secondrow" class="col-md-4">
+            <!-- <div id="secondrow" class="col-md-4">
                 <form id="inputForm">
                     <input type="text" id="form-input">
                     <input id="submit" type="submit" value="Start">
                 </form>
+            </div> -->
+            <div id="secondrow" class=" col-md-4 input-group">
+                <input id="form-input" type="text" class="form-control" placeholder="Name">
+                <span class="input-group-btn">
+                  <button id="submit" class="btn btn-default" type="submit">Start</button>
+                </span>
             </div>
             <div class="col-md-4">
                     
             </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
-                <div id=player1 class=innerbox>
-                    <div class="row name">
+            <div class="col-md-4 panel panel-default" >
+                <div id="player1" class="innerbox" >
+                    <div class="row name panel-heading">
                     Waiting for Player 1
                     </div>
-                    <div class="row rps">
+                    <div class="row rps panel-body">
 
                     </div>
-                    <div class="row winloss">
+                    <div class="row winloss panel-footer">
                           
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div id=midbox class=innerbox>
+            <div id="midarea" class="col-md-4 panel panel-default" >
+                <div id="midbox" class="innerbox">
 
                 </div>    
             </div>
-            <div class="col-md-4">
-                <div id=player2 class=innerbox>
-                    <div class="row name">
+            <div class="col-md-4 panel panel-default" >
+                <div id="player2" class="innerbox">
+                    <div class="row name panel-heading">
                     Waiting for Player 2
                     </div>
-                    <div class="row rps">
+                    <div class="row rps panel-body">
                         
                     </div>
-                    <div class="row winloss">
+                    <div class="row winloss panel-footer">
 
                     </div>
                 </div>
         </div>
-        <div class="row">
-            <div class="col-md-2">
-
-            </div>
-            <div class="col-md-10 chatbox">
-                <div id="chatbox"></div>
-            </div>
-            <div class="col-md-2">
-
+        <div class="row chatarea">
+            <div class="col-md-12 chatbox panel panel-default">
+                <div id="chatbox" class="panel-body"></div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-2">
-                
-            </div>
-            <div class="col-md-10">
-                <form id="chatForm">
-                    <input type="text" id="chat-input">
-                    <input id="send" type="submit" value="Send">
-                </form>
-            </div>
-            <div class="col-md-2">
-
-            </div>
+        <div class="row chatarea">
+            <div class="col-md-12">
+                <div class="input-group">
+                    <input type="text" id="chat-input" class="form-control" placeholder="Enter chat...">
+                    <span class="input-group-btn">
+                        <button id="send" class="btn btn-default" type="button">Send</button>
+                      </span>
+                </div>
+            </div>    
         </div>
     </div>
 </body>
