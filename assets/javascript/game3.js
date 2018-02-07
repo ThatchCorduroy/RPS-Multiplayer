@@ -342,28 +342,38 @@ $(document).ready(function() {
             
             var chatplayer = chat.player;
             var chattext = chat.text;
+            var chatname;
 
-            var $newchat = $("<div>");
+            var pname;
+            var oname;
+
+            var $newchat = $("<div>");      
             
+            database.ref().once("value").then(function(snapshot) { //should have made pname/oname global
+    
+                var data = snapshot.val();
+    
+                var pname = data.players[player].name;
+                var oname = data.players[opponent].name;
 
-            if (chatplayer === player) {
-                $newchat.addClass("alert alert-success");
-                $newchat.attr("role", "alert");
-            } else if (chatplayer === opponent) {
-                $newchat.addClass("alert alert-info");
-                $newchat.attr("role", "alert");
-                $newchat.css("text-align", "right");
-                
-            }
+                if (chatplayer === player) {
+                    chatname = pname;
+                    $newchat.addClass("alert alert-success");
+                    $newchat.attr("role", "alert");
+                } else if (chatplayer === opponent) {
+                    chatname = oname;
+                    $newchat.addClass("alert alert-info");
+                    $newchat.attr("role", "alert");
+                    $newchat.css("text-align", "right");
+                    
+                }
 
-            $newchat.text("Player " + chatplayer + ": " + chattext);
+                $newchat.text(chatname + ": " + chattext);
 
-            $chatbox.append($newchat);
-            $chatbox.scrollTop(($chatbox)[0].scrollHeight);
-        
+                $chatbox.append($newchat);
+                $chatbox.scrollTop(($chatbox)[0].scrollHeight);
+            });
         })
-
-
     };
 
     function checkWinner() {
